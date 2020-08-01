@@ -3,6 +3,7 @@ const path = require('path')
 const express = require('express')
 const mongoose = require('mongoose')
 const ejs = require('ejs')
+const { stringify } = require('querystring')
 
 const port = 3000
 
@@ -22,16 +23,34 @@ app.use(express.urlencoded({ extended: false }))
 app.use(express.static(publicDirectoryPath))
 
 //database coonnect
-mongoose.connect('mongodb://localhost:27017/wikiDB', { 
+mongoose.connect('mongodb://localhost:27017/wikiDB', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false
 })
 
+//schemas
 
+const articlesSchema = {
+  title: String,
+  content: String
+}
 
+const Article = mongoose.model('Article', articlesSchema)
+
+//app
+
+app.get('/articles', (req,res)=>{
+    Article.find({},(err, articles)=>{
+        if(!err){
+            res.send(articles)  
+        }else{
+            res.send(err)
+        }
+    })
+})
 
 
 app.listen(port, () => {
-    console.log(`App is running on port:${port}`)
-  })
+  console.log(`App is running on port:${port}`)
+})
