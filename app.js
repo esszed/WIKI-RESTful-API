@@ -40,40 +40,38 @@ const Article = mongoose.model('Article', articlesSchema)
 
 //app
 
-app.get('/articles', (req, res) => {
-  Article.find({}, (err, articles) => {
-    if (!err) {
-      res.send(articles)
-    } else {
-      res.send(err)
-    }
+app.route('/articles')
+  .get((req, res) => {
+    Article.find({}, (err, articles) => {
+      if (!err) {
+        res.send(articles)
+      } else {
+        res.send(err)
+      }
+    })
   })
-})
-
-app.post('/articles', (req, res) => {
-  console.log(req.body.title, req.body.content)
-  const article = new Article({
-    title: req.body.title,
-    content: req.body.content
+  .post((req, res) => {
+    const article = new Article({
+      title: req.body.title,
+      content: req.body.content
+    })
+    article.save(err => {
+      if (err) {
+        res.send(err)
+      } else {
+        res.send('Article added')
+      }
+    })
   })
-  article.save(err => {
-    if (err) {
-      res.send(err)
-    } else {
-      res.send('Article added')
-    }
+  .delete((req, res) => {
+    Article.deleteMany({}, err => {
+      if (err) {
+        console.log(err)
+      } else {
+        res.send('All articles deleted')
+      }
+    })
   })
-})
-
-app.delete('/articles', (req, res) => {
-  Article.deleteMany({}, err => {
-    if (err) {
-      console.log(err)
-    } else {
-      res.send('All articles deleted')
-    }
-  })
-})
 
 app.listen(port, () => {
   console.log(`App is running on port:${port}`)
