@@ -65,6 +65,16 @@ app.post('/articles', (req, res) => {
   })
 })
 
+app.delete('/articles', (req, res) => {
+  Article.deleteMany({}, err => {
+    if (err) {
+      console.log(err)
+    } else {
+      res.send('All articles deleted')
+    }
+  })
+})
+
 app.listen(port, () => {
   console.log(`App is running on port:${port}`)
 })
