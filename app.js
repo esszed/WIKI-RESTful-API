@@ -41,7 +41,8 @@ const Article = mongoose.model('Article', articlesSchema)
 //app
 
 //all articles
-app.route('/articles')
+app
+  .route('/articles')
   .get((req, res) => {
     Article.find({}, (err, articles) => {
       err ? res.send(err) : res.send(articles)
@@ -63,15 +64,50 @@ app.route('/articles')
   })
 
 //specific article
-app.route('/articles/:articleTitle').get((req, res) => {
-  Article.findOne({ title: req.params.articleTitle }, (err, article) => {
-    err
-      ? res.send(err)
-      : article
-      ? res.send(article)
-      : res.send(JSON.stringify({ error: '404 article not found' }))
+app
+  .route('/articles/:articleTitle')
+  .get((req, res) => {
+    Article.findOne({ title: req.params.articleTitle }, (err, article) => {
+      err
+        ? res.send(err)
+        : article
+        ? res.send(article)
+        : res.send(JSON.stringify({ error: '404 article not found' }))
+    })
   })
-})
+  .put((req, res) => {
+    let updateObject
+    const bodyContent = req.body.content
+    const bodyTitle = req.body.title
+    if (!bodyTitle && !bodyContent) {
+      res.send('Nothing to update with ')
+      return
+    } else if (!bodyTitle) {
+      updateObject = {
+        content: bodyContent
+      }
+    } else if (!bodyContent) {
+      updateObject = {
+        title: bodyTitle
+      }
+    } else {
+      updateObject = {
+        title: bodyTitle,
+        content: bodyContent
+      }
+    }
+    Article.updateOne(
+      { title: req.params.articleTitle },
+      updateObject,
+      (err, article) => {
+        err
+          ? res.send(err)
+          : article.n > 0
+          ? res.send('Succesfuly updated')
+          : res.send('Could not update, no such article')
+      }
+    )
+  })
 
 app.listen(port, () => {
   console.log(`App is running on port:${port}`)
