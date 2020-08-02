@@ -40,14 +40,11 @@ const Article = mongoose.model('Article', articlesSchema)
 
 //app
 
+//all articles
 app.route('/articles')
   .get((req, res) => {
     Article.find({}, (err, articles) => {
-      if (!err) {
-        res.send(articles)
-      } else {
-        res.send(err)
-      }
+      err ? res.send(err) : res.send(articles)
     })
   })
   .post((req, res) => {
@@ -56,22 +53,25 @@ app.route('/articles')
       content: req.body.content
     })
     article.save(err => {
-      if (err) {
-        res.send(err)
-      } else {
-        res.send('Article added')
-      }
+      err ? res.send(err) : res.send('Article added')
     })
   })
   .delete((req, res) => {
     Article.deleteMany({}, err => {
-      if (err) {
-        console.log(err)
-      } else {
-        res.send('All articles deleted')
-      }
+      err ? console.log(err) : res.send('All articles deleted')
     })
   })
+
+//specific article
+app.route('/articles/:articleTitle').get((req, res) => {
+  Article.findOne({ title: req.params.articleTitle }, (err, article) => {
+    err
+      ? res.send(err)
+      : article
+      ? res.send(article)
+      : res.send(JSON.stringify({ error: '404 article not found' }))
+  })
+})
 
 app.listen(port, () => {
   console.log(`App is running on port:${port}`)
