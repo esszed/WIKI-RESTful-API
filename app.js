@@ -76,29 +76,12 @@ app
     })
   })
   .put((req, res) => {
-    let updateObject
-    const bodyContent = req.body.content
-    const bodyTitle = req.body.title
-    if (!bodyTitle && !bodyContent) {
-      res.send('Nothing to update with ')
-      return
-    } else if (!bodyTitle) {
-      updateObject = {
-        content: bodyContent
-      }
-    } else if (!bodyContent) {
-      updateObject = {
-        title: bodyTitle
-      }
-    } else {
-      updateObject = {
-        title: bodyTitle,
-        content: bodyContent
-      }
-    }
     Article.updateOne(
       { title: req.params.articleTitle },
-      updateObject,
+      {
+        title: req.body.title,
+        content: req.body.content
+      },
       (err, article) => {
         err
           ? res.send(err)
