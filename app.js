@@ -76,7 +76,7 @@ app
     })
   })
   .put((req, res) => {
-    Article.updateOne(
+    Article.replaceOne(
       { title: req.params.articleTitle },
       {
         title: req.body.title,
