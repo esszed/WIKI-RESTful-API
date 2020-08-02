@@ -91,6 +91,19 @@ app
       }
     )
   })
+  .patch((req, res) => {
+    Article.updateOne(
+      { title: req.params.articleTitle },
+      { $set: req.body },
+      (err, article) => {
+        err
+          ? res.send(err)
+          : article.n > 0
+          ? res.send('Succesfuly updated')
+          : res.send('No such article or nothing to update with')
+      }
+    )
+  })
 
 app.listen(port, () => {
   console.log(`App is running on port:${port}`)
