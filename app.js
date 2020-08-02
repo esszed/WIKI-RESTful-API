@@ -104,6 +104,11 @@ app
       }
     )
   })
+  .delete((req,res)=>{
+    Article.deleteOne({title:req.params.articleTitle}, err=>{
+      err ? res.send(err) : res.send('Succesfuly deleted')
+    })
+  })
 
 app.listen(port, () => {
   console.log(`App is running on port:${port}`)
